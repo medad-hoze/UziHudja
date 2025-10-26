@@ -137,6 +137,74 @@
       border:1px solid rgba(0,0,0,.06); height:360px;
       background:#fff;
     }
+
+    /* --- Booking form: mobile-first, clean & compact --- */
+#book .blurb { margin-bottom: 8px; }
+
+#book .panel { 
+  padding: 16px; 
+}
+
+#book .form {
+  display: grid;
+  gap: 12px;
+}
+
+/* Field blocks with labels */
+#book .field {
+  display: grid;
+  gap: 6px;
+}
+#book .field label {
+  font-size: .9rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: .2px;
+}
+
+/* Inputs: comfortable tap targets, stop iOS zoom */
+#book input,
+#book textarea,
+#book select {
+  width: 100%;
+  padding: 14px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.12);
+  font: inherit;
+  font-size: 16px; /* prevents iOS zoom on focus */
+  background: #fff;
+}
+
+/* Textarea size */
+#book textarea { min-height: 100px; resize: vertical; }
+
+/* Grid rows: single column by default */
+#book .row.two {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+/* On wider screens, split two-up */
+@media (min-width: 600px) {
+  #book .row.two { grid-template-columns: 1fr 1fr; }
+}
+
+/* Full-width submit for thumb reach */
+#book .panel .btn { width: 100%; padding: 14px 16px; font-size: 1rem; }
+
+/* Small helper text */
+#book .helper { font-size: .85rem; color: var(--muted); }
+
+/* Slightly reduce spacing on small screens */
+@media (max-width: 420px) {
+  .section { padding: 22px 0; }
+  .wrap { padding: 14px; }
+}
+
+/* Optional: make sticky bar a tad taller for easier tapping */
+.mbar a { padding: 12px 14px; }
+
   </style>
 </head>
 <body>
@@ -245,19 +313,56 @@
           <a class="btn" href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
         </div>
       </div>
-      <form class="panel" action="https://formspree.io/f/yourFormId" method="POST" onsubmit="thanks(event)">
-        <div class="row">
-          <input name="name" placeholder="Your name" required aria-label="Your name" />
-          <input type="email" name="email" placeholder="Email" required aria-label="Email" />
-        </div>
-        <div class="row">
-          <input name="date" placeholder="Event date (optional)" aria-label="Event date" />
-          <input name="type" placeholder="Shoot type (wedding, portrait…)" aria-label="Shoot type" />
-        </div>
-        <textarea name="message" placeholder="Tell me a little (or keep it short!)" aria-label="Message"></textarea>
-        <button class="btn" type="submit">Send request</button>
-        <p id="thanks" class="muted" role="status" aria-live="polite" style="margin:8px 0 0"></p>
-      </form>
+<form class="panel form" action="https://formspree.io/f/yourFormId" method="POST" onsubmit="thanks(event)">
+  <div class="row two">
+    <div class="field">
+      <label for="name">Your name</label>
+      <input id="name" name="name" placeholder="Full name" autocomplete="name" required />
+    </div>
+    <div class="field">
+      <label for="phone">Phone (optional)</label>
+      <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" />
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="field">
+      <label for="email">Email</label>
+      <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+    </div>
+    <div class="field">
+      <label for="date">Event date</label>
+      <input id="date" type="date" name="date" aria-label="Event date" />
+    </div>
+  </div>
+
+  <div class="row two">
+    <div class="field">
+      <label for="type">Shoot type</label>
+      <select id="type" name="type" aria-label="Shoot type">
+        <option value="" selected>Choose…</option>
+        <option>Wedding</option>
+        <option>Portrait</option>
+        <option>Event</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="field">
+      <label for="location">Location (optional)</label>
+      <input id="location" name="location" placeholder="Neighborhood / venue" autocomplete="address-level2" />
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="message">Notes</label>
+    <textarea id="message" name="message" placeholder="Short and sweet is perfect"></textarea>
+    <div class="helper">I typically reply within 24 hours.</div>
+  </div>
+
+  <button class="btn" type="submit">Request availability</button>
+  <p id="thanks" class="muted" role="status" aria-live="polite" style="margin:6px 0 0"></p>
+</form>
+
     </div>
   </section>
 
