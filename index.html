@@ -1,717 +1,426 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>NYC Photographer — Bright, Minimal, Mobile-First</title>
-    <meta name="description" content="Modern, happy, mobile-first photography portfolio for a New York photographer. Minimal text with bold visuals and fast performance." />
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
-    <!-- Leaflet CSS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j8Mk1FmcGxYk1n8pD1W1JhbH0R5Q0SYJ8v+7G6k=" crossorigin="" />
-    <style>
-        :root{
-            --bg:#fffefb;
-            --ink:#1e1b16;
-            --muted:#6a6761;
-            --accent:#ff7a59; /* coral */
-            --accent-2:#ffd166; /* sunny */
-            --accent-3:#06d6a0; /* mint */
-            --shadow:0 10px 30px rgba(0,0,0,.08);
-            --radius:22px;
-        }
-        *, *::before, *::after{
-            box-sizing:border-box
-        }
-        html,body{
-            height:100%
-        }
-        body{
-            margin:0;
-            background:var(--bg);
-            color:var(--ink);
-            font: 16px/1.5 "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-            -webkit-font-smoothing:antialiased;
-            text-rendering:optimizeLegibility;
-            padding-bottom: 80px;
-        }
-        /* ---------- Layout ---------- */
-        .wrap{
-            width:min(1120px, 100%);
-            margin-inline:auto;
-            padding: clamp(16px, 3vw, 28px);
-        }
-        header{
-            position:sticky;
-            top:0;
-            z-index:50;
-            backdrop-filter:saturate(140%) blur(8px);
-            background:linear-gradient(180deg, rgba(255,255,255,.9), rgba(255,255,255,.6));
-            border-bottom:1px solid rgba(0,0,0,.06);
-        }
-        .nav{
-            display:flex;
-            align-items:center;
-            justify-content:space-between;
-            gap:14px;
-        }
-        .brand{
-            display:flex;
-            align-items:center;
-            gap:10px;
-            text-decoration:none;
-            color:inherit;
-        }
-        .logo{
-            width:36px;
-            height:36px;
-            border-radius:12px;
-            display:grid;
-            place-items:center;
-            background: conic-gradient(from 220deg, var(--accent), var(--accent-2), var(--accent-3), var(--accent));
-            box-shadow: var(--shadow);
-        }
-        .brand span{
-            font-weight:700;
-            letter-spacing:.2px
-        }
-        .pill{
-            display:inline-flex;
-            align-items:center;
-            gap:8px;
-            padding:10px 14px;
-            border-radius:999px;
-            background: #fff;
-            border:1px solid rgba(0,0,0,.06);
-            box-shadow: var(--shadow);
-        }
-        .cta{
-            background:var(--ink);
-            color:white;
-            border:none;
-            cursor:pointer
-        }
-        .cta:hover{
-            filter:brightness(1.05)
-        }
-        /* ---------- Hero ---------- */
-        .hero{
-            position:relative;
-            overflow:hidden;
-            border-radius:0 0 var(--radius) var(--radius);
-            background: linear-gradient(120deg, rgba(255,122,89,.15), rgba(255,209,102,.15) 40%, rgba(6,214,160,.12));
-            isolation:isolate;
-        }
-        .hero .wrap{
-            display:grid;
-            gap:22px;
-            padding-top:24px;
-            padding-bottom:28px
-        }
-        .badge{
-            font-size:.85rem;
-            color:#222;
-            background:#fff;
-            border:1px solid rgba(0,0,0,.06);
-            width:max-content
-        }
-        h1{
-            font-family:"Playfair Display", serif;
-            font-weight:600;
-            font-size: clamp(28px, 5vw, 56px);
-            margin:0
-        }
-        .sub{
-            color:var(--muted);
-            max-width:62ch;
-            margin:0
-        }
-        .hero-media{
-            display:grid;
-            gap:14px;
-            grid-template-columns:repeat(12, 1fr)
-        }
-        .tile{
-            position:relative;
-            border-radius:18px;
-            overflow:hidden;
-            box-shadow:var(--shadow);
-            aspect-ratio: 4/5
-        }
-        .tile img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:block
-        }
-        .tile.big{
-            grid-column: span 6
-        }
-        .tile.small{
-            grid-column: span 3
-        }
-        @media (max-width:900px){
-            .tile.big{
-                grid-column: span 12
-            }
-            .tile.small{
-                grid-column: span 6
-            }
-        }
-        /* ---------- Services ---------- */
-        .section{
-            padding: clamp(28px, 6vw, 72px) 0
-        }
-        .section h2{
-            font-family:"Playfair Display", serif;
-            font-size: clamp(22px, 4vw, 40px);
-            margin:0 0 10px
-        }
-        .muted{
-            color:var(--muted)
-        }
-        .cards{
-            display:grid;
-            grid-template-columns: repeat(12, 1fr);
-            gap:18px
-        }
-        .card{
-            grid-column: span 12;
-            padding:18px;
-            border-radius:20px;
-            background:#fff;
-            border:1px solid rgba(0,0,0,.06);
-            box-shadow:var(--shadow);
-            display:flex;
-            align-items:center;
-            gap:14px
-        }
-        .card svg{
-            flex:0 0 42px
-        }
-        .card b{
-            display:block
-        }
-        @media (min-width:700px){
-            .card{
-                grid-column: span 4
-            }
-        }
-        /* ---------- Portfolio Grid ---------- */
-        .filters{
-            display:flex;
-            gap:10px;
-            flex-wrap:wrap;
-            margin-bottom:14px
-        }
-        .chip{
-            padding:8px 12px;
-            border-radius:999px;
-            border:1px solid rgba(0,0,0,.08);
-            background:#fff;
-            cursor:pointer;
-            user-select:none
-        }
-        .chip.active{
-            background:var(--accent);
-            color:white;
-            border-color: transparent
-        }
-        .grid{
-            display:grid;
-            grid-template-columns:repeat(12, 1fr);
-            gap:12px
-        }
-        .grid .item{
-            grid-column: span 6;
-            position:relative;
-            overflow:hidden;
-            border-radius:16px;
-            box-shadow:var(--shadow)
-        }
-        .grid .item img{
-            width:100%;
-            height:100%;
-            object-fit:cover;
-            display:block;
-            aspect-ratio: 3/4;
-            transition: transform .35s ease
-        }
-        .grid .item:hover img{
-            transform: scale(1.03)
-        }
-        @media (min-width:900px){
-            .grid .item{
-                grid-column: span 3
-            }
-        }
-        /* ---------- Lightbox ---------- */
-        .lightbox{
-            position:fixed;
-            inset:0;
-            display:none;
-            place-items:center;
-            background:rgba(0,0,0,.8);
-            z-index:100
-        }
-        .lightbox.open{
-            display:grid
-        }
-        .lightbox img{
-            max-width:92vw;
-            max-height:86vh;
-            border-radius:14px;
-            box-shadow:0 20px 60px rgba(0,0,0,.4)
-        }
-        /* ---------- Contact ---------- */
-        .contact{
-            display:grid;
-            gap:14px;
-            grid-template-columns:repeat(12, 1fr)
-        }
-        .contact .blurb{
-            grid-column: span 12
-        }
-        .contact .panel{
-            grid-column: span 12;
-            background:#fff;
-            border:1px solid rgba(0,0,0,.06);
-            border-radius:20px;
-            padding:18px;
-            box-shadow:var(--shadow)
-        }
-        .row{
-            display:flex;
-            gap:10px
-        }
-        input,textarea{
-            width:100%;
-            padding:12px 14px;
-            border-radius:12px;
-            border:1px solid rgba(0,0,0,.12);
-            font:inherit
-        }
-        textarea{
-            min-height:110px;
-            resize:vertical
-        }
-        .btn{
-            display:inline-flex;
-            align-items:center;
-            justify-content:center;
-            gap:10px;
-            padding:12px 16px;
-            border-radius:12px;
-            background:var(--accent);
-            color:white;
-            text-decoration:none;
-            border:none;
-            cursor:pointer;
-            font-weight:600
-        }
-        .btn.alt{
-            background:var(--accent-3);
-            color:#063
-        }
-        @media (min-width:900px){
-            .contact .blurb{
-                grid-column: span 5
-            }
-            .contact .panel{
-                grid-column: span 7
-            }
-        }
-        /* ---------- Sticky Mobile Bar ---------- */
-        .mbar{
-            position:fixed;
-            inset:auto 0 0 0;
-            z-index:60;
-            display:flex;
-            gap:8px;
-            padding:10px;
-            backdrop-filter:saturate(140%) blur(10px);
-            background:linear-gradient(180deg, rgba(255,255,255,.7), rgba(255,255,255,.95));
-            border-top:1px solid rgba(0,0,0,.08)
-        }
-        .mbar a{
-            flex:1;
-            text-align:center;
-            padding:10px 12px;
-            border-radius:12px;
-            background:#fff;
-            border:1px solid rgba(0,0,0,.06);
-            text-decoration:none;
-            color:#111;
-            font-weight:600
-        }
-        .mbar a.primary{
-            background:var(--ink);
-            color:#fff
-        }
-        /* ---------- Tiny Animations ---------- */
-        .reveal{
-            opacity:0;
-            transform: translateY(12px);
-            transition: .6s ease
-        }
-        .reveal.is-visible{
-            opacity:1;
-            transform:none
-        }
-        /* Accessibility helpers */
-        .sr-only{
-            position:absolute;
-            width:1px;
-            height:1px;
-            padding:0;
-            margin:-1px;
-            overflow:hidden;
-            clip:rect(0,0,0,0);
-            border:0
-        }
-        /* Map UI */
-        .mapwrap{
-            border-radius:20px;
-            overflow:hidden;
-            box-shadow:var(--shadow);
-            border:1px solid rgba(0,0,0,.06);
-            height:360px;
-            background:#fff;
-        }
-        /* --- Booking form: mobile-first, clean & compact --- */
-        #book .blurb {
-            margin-bottom: 8px;
-        }
-        #book .panel {
-            padding: 16px;
-        }
-        #book .form {
-            display: grid;
-            gap: 12px;
-        }
-        /* Field blocks with labels */
-        #book .field {
-            display: grid;
-            gap: 6px;
-        }
-        #book .field label {
-            font-size: .9rem;
-            font-weight: 600;
-            color: var(--muted);
-            letter-spacing: .2px;
-        }
-        /* Inputs: comfortable tap targets, stop iOS zoom */
-        #book input, #book textarea, #book select {
-            width: 100%;
-            padding: 14px 14px;
-            border-radius: 12px;
-            border: 1px solid rgba(0,0,0,.12);
-            font: inherit;
-            font-size: 16px;
-            background: #fff;
-        }
-        /* Textarea size */
-        #book textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-        /* Grid rows: single column by default */
-        #book .row.two {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 12px;
-        }
-        /* On wider screens, split two-up */
-        @media (min-width: 600px) {
-            #book .row.two {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        .helper {
-            font-size: .85rem;
-            color: var(--muted);
-            margin-top: 4px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NYC Photographer — Bright, Minimal, Mobile-First</title>
+  <meta name="description" content="Modern, happy, mobile-first photography portfolio for a New York photographer. Minimal text with bold visuals and fast performance." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-o9N1j8Mk1FmcGxYk1n8pD1W1JhbH0R5Q0SYJ8v+7G6k=" crossorigin="" />
+  <style>
+    :root{ --bg:#fffefb; --ink:#1e1b16; --muted:#6a6761; --accent:#ff7a59; --accent-2:#ffd166; --accent-3:#06d6a0; --shadow:0 10px 30px rgba(0,0,0,.08); --radius:22px; }
+    *,*::before,*::after{ box-sizing:border-box }
+    html,body{ height:100% }
+    body{ margin:0;background:var(--bg);color:var(--ink);font:16px/1.5 "Poppins",system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;padding-bottom:80px }
+    .wrap{ width:min(1120px,100%);margin-inline:auto;padding:clamp(16px,3vw,28px) }
+    header{ position:sticky;top:0;z-index:50;backdrop-filter:saturate(140%) blur(8px);background:linear-gradient(180deg,rgba(255,255,255,.9),rgba(255,255,255,.6));border-bottom:1px solid rgba(0,0,0,.06) }
+    .nav{ display:flex;align-items:center;justify-content:space-between;gap:14px }
+    .brand{ display:flex;align-items:center;gap:10px;text-decoration:none;color:inherit }
+    .logo{ width:36px;height:36px;border-radius:12px;display:grid;place-items:center;background:conic-gradient(from 220deg,var(--accent),var(--accent-2),var(--accent-3),var(--accent));box-shadow:var(--shadow) }
+    .brand span{ font-weight:700;letter-spacing:.2px }
+    .pill{ display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow) }
+    .cta{ background:var(--ink);color:#fff;border:none;cursor:pointer }
+    .cta:hover{ filter:brightness(1.05) }
+    .hero{ position:relative;overflow:hidden;border-radius:0 0 var(--radius) var(--radius);background:linear-gradient(120deg,rgba(255,122,89,.15),rgba(255,209,102,.15) 40%,rgba(6,214,160,.12));isolation:isolate }
+    .hero .wrap{ display:grid;gap:22px;padding-top:24px;padding-bottom:28px }
+    .badge{ font-size:.85rem;color:#222;background:#fff;border:1px solid rgba(0,0,0,.06);width:max-content }
+    h1{ font-family:"Playfair Display",serif;font-weight:600;font-size:clamp(28px,5vw,56px);margin:0 }
+    .sub{ color:var(--muted);max-width:62ch;margin:0 }
+    .hero-media{ display:grid;gap:14px;grid-template-columns:repeat(12,1fr) }
+    .tile{ position:relative;border-radius:18px;overflow:hidden;box-shadow:var(--shadow);aspect-ratio:4/5 }
+    .tile img{ width:100%;height:100%;object-fit:cover;display:block }
+    .tile.big{ grid-column:span 6 } .tile.small{ grid-column:span 3 }
+    @media (max-width:900px){ .tile.big{ grid-column:span 12 } .tile.small{ grid-column:span 6 } }
+    .section{ padding:clamp(28px,6vw,72px) 0 }
+    .section h2{ font-family:"Playfair Display",serif;font-size:clamp(22px,4vw,40px);margin:0 0 10px }
+    .muted{ color:var(--muted) }
+    .cards{ display:grid;grid-template-columns:repeat(12,1fr);gap:18px }
+    .card{ grid-column:span 12;padding:18px;border-radius:20px;background:#fff;border:1px solid rgba(0,0,0,.06);box-shadow:var(--shadow);display:flex;align-items:center;gap:14px }
+    .card svg{ flex:0 0 42px } .card b{ display:block }
+    @media (min-width:700px){ .card{ grid-column:span 4 } }
+    .filters{ display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px }
+    .chip{ padding:8px 12px;border-radius:999px;border:1px solid rgba(0,0,0,.08);background:#fff;cursor:pointer;user-select:none }
+    .chip.active{ background:var(--accent);color:#fff;border-color:transparent }
+    .grid{ display:grid;grid-template-columns:repeat(12,1fr);gap:12px }
+    .grid .item{ grid-column:span 6;position:relative;overflow:hidden;border-radius:16px;box-shadow:var(--shadow) }
+    .grid .item img{ width:100%;height:100%;object-fit:cover;display:block;aspect-ratio:3/4;transition:transform .35s ease }
+    .grid .item:hover img{ transform:scale(1.03) }
+    @media (min-width:900px){ .grid .item{ grid-column:span 3 } }
+    .lightbox{ position:fixed;inset:0;display:none;place-items:center;background:rgba(0,0,0,.8);z-index:100 }
+    .lightbox.open{ display:grid }
+    .lightbox img{ max-width:92vw;max-height:86vh;border-radius:14px;box-shadow:0 20px 60px rgba(0,0,0,.4) }
+    .contact{ display:grid;gap:14px;grid-template-columns:repeat(12,1fr) }
+    .contact .blurb{ grid-column:span 12 } .contact .panel{ grid-column:span 12;background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:20px;padding:18px;box-shadow:var(--shadow) }
+    .row{ display:flex;gap:10px }
+    input,textarea{ width:100%;padding:12px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);font:inherit }
+    textarea{ min-height:110px;resize:vertical }
+    .btn{ display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:12px 16px;border-radius:12px;background:var(--accent);color:#fff;text-decoration:none;border:none;cursor:pointer;font-weight:600 }
+    .btn.alt{ background:var(--accent-3);color:#063 }
+    @media (min-width:900px){ .contact .blurb{ grid-column:span 5 } .contact .panel{ grid-column:span 7 } }
+    .mbar{ position:fixed;inset:auto 0 0 0;z-index:60;display:flex;gap:8px;padding:10px;backdrop-filter:saturate(140%) blur(10px);background:linear-gradient(180deg,rgba(255,255,255,.7),rgba(255,255,255,.95));border-top:1px solid rgba(0,0,0,.08) }
+    .mbar a{ flex:1;text-align:center;padding:10px 12px;border-radius:12px;background:#fff;border:1px solid rgba(0,0,0,.06);text-decoration:none;color:#111;font-weight:600 }
+    .mbar a.primary{ background:var(--ink);color:#fff }
+    .reveal{ opacity:0;transform:translateY(12px);transition:.6s ease } .reveal.is-visible{ opacity:1;transform:none }
+    .sr-only{ position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0 }
+    .mapwrap{ border-radius:20px;overflow:hidden;box-shadow:var(--shadow);border:1px solid rgba(0,0,0,.06);height:360px;background:#fff }
+    /* Booking form tweaks */
+    #book .blurb{ margin-bottom:8px } #book .panel{ padding:16px } #book .form{ display:grid;gap:12px }
+    #book .field{ display:grid;gap:6px } #book .field label{ font-size:.9rem;font-weight:600;color:var(--muted);letter-spacing:.2px }
+    #book input,#book textarea,#book select{ width:100%;padding:14px 14px;border-radius:12px;border:1px solid rgba(0,0,0,.12);font:inherit;font-size:16px;background:#fff }
+    #book textarea{ min-height:100px;resize:vertical }
+    #book .row.two{ display:grid;grid-template-columns:1fr;gap:12px }
+    @media (min-width:600px){ #book .row.two{ grid-template-columns:1fr 1fr } }
+    .helper{ font-size:.85rem;color:var(--muted);margin-top:4px }
+  </style>
 </head>
 <body>
-    <!-- Header -->
-<header>
+  <!-- Header -->
+  <header>
     <div class="wrap">
-        <nav class="nav">
-            <a class="brand" href="/">
-                <div class="logo">
-                    <img src="uzi.jpg" alt="Uzi Logo" style="height:58px; width:auto; border-radius:50%;">
-                </div>
-                <span>Uziel photography</span>
-            </a>
-            <a class="nav-link" href="https://script.google.com/macros/s/AKfycby6kBGFixxpRZsdyskD7QzUTZtqbybLFcnHOG5hBcO8ytvnUaKMDGzdg-BPr6nzLlR7/exec" target="_blank">My Gallery</a>
-            <a class="pill cta" href="#book">Book Me</a>
-        </nav>
+      <nav class="nav">
+        <a class="brand" href="/">
+          <div class="logo">
+            <img src="uzi.jpg" alt="Uzi Logo" style="height:58px;width:auto;border-radius:50%;">
+          </div>
+          <span>Uziel photography</span>
+        </a>
+        <a class="nav-link" href="https://script.google.com/macros/s/AKfycbxcJ9JMfUQKDIWUqxiYRJ_QHHx0pv96O5RLv76obUs3sHvbpTcVK86RK94hr7N2gDnd/exec" target="_blank">My Gallery</a>
+        <a class="pill cta" href="#book">Book Me</a>
+      </nav>
     </div>
-</header>
+  </header>
 
-    <!-- Hero -->
-    <section class="hero">
-        <div class="wrap">
-            <span class="pill badge">New York City + Long Island</span>
-            <h1>Capturing life's bright, honest moments</h1>
-            <p class="sub">Thoughtful photography for weddings, portraits, and events</p>
-            <div class="hero-media">
-                <div class="tile big"><img src="1.jpeg" alt="Featured photo 1" loading="eager" /></div>
-                <div class="tile small"><img src="2.jpg" alt="Featured photo 2" loading="eager" /></div>
-                <div class="tile small"><img src="3.jpg" alt="Featured photo 3" loading="eager" /></div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Services -->
-    <section class="section" id="services">
-        <div class="wrap">
-            <h2 class="reveal">What I do</h2>
-            <div class="cards">
-                <article class="card reveal">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    <div>
-                        <b>Weddings</b>
-                        <span class="muted">Warm color, honest moments.</span>
-                    </div>
-                </article>
-                <article class="card reveal">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 22a7.5 7.5 0 0 1 13 0"/></svg>
-                    <div>
-                        <b>Portraits</b>
-                        <span class="muted">Studio clean or city vibes.</span>
-                    </div>
-                </article>
-                <article class="card reveal">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v14H3z"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
-                    <div>
-                        <b>Events</b>
-                        <span class="muted">From galas to backyard parties.</span>
-                    </div>
-                </article>
-            </div>
-        </div>
-    </section>
-
-    <!-- Portfolio -->
-    <section class="section" id="work">
-        <div class="wrap">
-            <h2 class="reveal">Recent work</h2>
-            <div class="filters reveal" role="tablist" aria-label="Filter portfolio">
-                <button class="chip active" data-filter="all" role="tab" aria-selected="true">All</button>
-                <button class="chip" data-filter="wedding" role="tab">Wedding</button>
-                <button class="chip" data-filter="portrait" role="tab">Portrait</button>
-                <button class="chip" data-filter="event" role="tab">Event</button>
-            </div>
-            <div class="grid" id="grid" aria-live="polite">
-                <!-- Items injected by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Location / Map -->
-<section class="section" id="location">
+  <!-- Hero -->
+  <section class="hero">
     <div class="wrap">
-        <h2 class="reveal">Where I shoot</h2>
-        <p class="muted reveal">Available throughout New York State</p>
-        <div class="mapwrap reveal" aria-label="Map showing New York State">
-            <div id="map" style="height:100%"></div>
-        </div>
-        <div style="margin-top:10px" class="reveal">
-            <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps?q=New+York+State">Open in Maps</a>
-        </div>
+      <span class="pill badge">New York City + Long Island</span>
+      <h1>Capturing life's bright, honest moments</h1>
+      <p class="sub">Thoughtful photography for weddings, portraits, and events</p>
+      <div class="hero-media">
+        <div class="tile big"><img src="1.jpeg" alt="Featured photo 1" loading="eager" /></div>
+        <div class="tile small"><img src="2.jpg" alt="Featured photo 2" loading="eager" /></div>
+        <div class="tile small"><img src="3.jpg" alt="Featured photo 3" loading="eager" /></div>
+      </div>
     </div>
-</section>
+  </section>
 
-    <!-- Contact -->
-    <section class="section" id="book">
-        <div class="wrap contact">
-            <div class="blurb">
-                <h2 class="reveal">Let's make something you'll love</h2>
-                <p class="muted reveal">Based in New York City • Traveling across Long Island + beyond</p>
-                <div class="reveal" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px">
-                    <a class="btn" href="https://wa.me/15166738977" target="_blank" rel="noopener">WhatsApp</a>
-                    <a class="btn alt" href="tel:+15166738977">Call</a>
-                    <a class="btn" href="https://instagram.com/yourhandle" target="_blank" rel="noopener">Instagram</a>
-                </div>
-            </div>
-            <form class="panel form" action="https://formspree.io/f/yourFormId" method="POST" onsubmit="thanks(event)">
-                <div class="row two">
-                    <div class="field">
-                        <label for="name">Your name</label>
-                        <input id="name" name="name" placeholder="Full name" autocomplete="name" required />
-                    </div>
-                    <div class="field">
-                        <label for="phone">Phone (optional)</label>
-                        <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" />
-                    </div>
-                </div>
-                <div class="row two">
-                    <div class="field">
-                        <label for="email">Email</label>
-                        <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
-                    </div>
-                    <div class="field">
-                        <label for="date">Event date</label>
-                        <input id="date" type="date" name="date" aria-label="Event date" />
-                    </div>
-                </div>
-                <div class="row two">
-                    <div class="field">
-                        <label for="type">Shoot type</label>
-                        <select id="type" name="type" aria-label="Shoot type">
-                            <option value="" selected>Choose…</option>
-                            <option>Wedding</option>
-                            <option>Portrait</option>
-                            <option>Event</option>
-                            <option>Other</option>
-                        </select>
-                    </div>
-                    <div class="field">
-                        <label for="location">Location (optional)</label>
-                        <input id="location" name="location" placeholder="Neighborhood / venue" autocomplete="address-level2" />
-                    </div>
-                </div>
-                <div class="field">
-                    <label for="message">Notes</label>
-                    <textarea id="message" name="message" placeholder="Short and sweet is perfect"></textarea>
-                    <div class="helper">I typically reply within 24 hours.</div>
-                </div>
-                <button class="btn" type="submit">Request availability</button>
-                <p id="thanks" class="muted" role="status" aria-live="polite" style="margin:6px 0 0"></p>
-            </form>
-        </div>
-    </section>
-
-    <!-- Sticky Mobile Bar -->
-    <nav class="mbar" aria-label="Quick actions">
-        <a href="#work">Portfolio</a>
-        <a href="#services">Services</a>
-        <a class="primary" href="#book">Book</a>
-    </nav>
-
-    <!-- Lightbox -->
-    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" onclick="closeLightbox()">
-        <img id="lightboxImg" alt="Expanded portfolio image" />
-        <button class="sr-only" onclick="closeLightbox()">Close</button>
+  <!-- Services -->
+  <section class="section" id="services">
+    <div class="wrap">
+      <h2 class="reveal">What I do</h2>
+      <div class="cards">
+        <article class="card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          <div><b>Weddings</b><span class="muted">Warm color, honest moments.</span></div>
+        </article>
+        <article class="card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="7" r="4"/><path d="M5.5 22a7.5 7.5 0 0 1 13 0"/></svg>
+          <div><b>Portraits</b><span class="muted">Studio clean or city vibes.</span></div>
+        </article>
+        <article class="card reveal">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="42" height="42" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3h18v14H3z"/><path d="M8 21h8"/><path d="M12 17v4"/></svg>
+          <div><b>Events</b><span class="muted">From galas to backyard parties.</span></div>
+        </article>
+      </div>
     </div>
+  </section>
 
-    <!-- Leaflet JS -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <!-- Portfolio -->
+  <section class="section" id="work">
+    <div class="wrap">
+      <h2 class="reveal">Recent work</h2>
+      <div class="filters reveal" role="tablist" aria-label="Filter portfolio">
+        <button class="chip active" data-filter="all" role="tab" aria-selected="true">All</button>
+        <button class="chip" data-filter="wedding" role="tab">Wedding</button>
+        <button class="chip" data-filter="portrait" role="tab">Portrait</button>
+        <button class="chip" data-filter="event" role="tab">Event</button>
+      </div>
+      <div class="grid" id="grid" aria-live="polite"></div>
+    </div>
+  </section>
 
-    <script>
-        // ---- Portfolio items (now using local images) ----
-        const items = [
-            {src:"4.jpeg", tag:"portrait", alt:"Smiling portrait against mural"},
-            {src:"5.jpg", tag:"wedding", alt:"Couple under confetti"},
-            {src:"6.jpeg", tag:"event", alt:"Friends dancing at party"},
-            {src:"7.jpg", tag:"wedding", alt:"First look in the park"},
-            {src:"8.jpeg", tag:"portrait", alt:"Studio headshot with smile"},
-            {src:"9.jpg", tag:"event", alt:"Cocktail cheers"},
-            {src:"10.jpg", tag:"portrait", alt:"Golden hour close-up"},
-            {src:"11.jpeg", tag:"wedding", alt:"City rooftop ceremony"}
-        ];
+  <!-- Location / Map -->
+  <section class="section" id="location">
+    <div class="wrap">
+      <h2 class="reveal">Where I shoot</h2>
+      <p class="muted reveal">Available throughout New York State</p>
+      <div class="mapwrap reveal" aria-label="Map showing New York State">
+        <div id="map" style="height:100%"></div>
+      </div>
+      <div style="margin-top:10px" class="reveal">
+        <a class="btn" target="_blank" rel="noopener" href="https://www.google.com/maps?q=New+York+State">Open in Maps</a>
+      </div>
+    </div>
+  </section>
 
-        const grid = document.getElementById('grid');
+  <!-- Contact -->
+  <section class="section" id="book">
+    <div class="wrap contact">
+      <div class="blurb">
+        <h2 class="reveal">Let's make something you'll love</h2>
+        <p class="muted reveal">Based in New York City • Traveling across Long Island + beyond</p>
+        <div class="reveal" style="display:flex; gap:10px; flex-wrap:wrap; margin-top:6px">
+          <a class="btn" href="https://wa.me/15166738977" target="_blank" rel="noopener">WhatsApp</a>
+          <a class="btn alt" href="tel:+15166738977">Call</a>
+          <a class="btn" href="https://www.instagram.com/uzielphotography/" target="_blank" rel="noopener">Instagram</a>
+        </div>
+      </div>
 
-        function render(filter='all'){
-            grid.innerHTML = '';
-            items.filter(i => filter==='all' || i.tag===filter).forEach(({src,alt})=>{
-                const a = document.createElement('a');
-                a.href = src;
-                a.className = 'item';
-                a.setAttribute('data-src', src);
-                a.innerHTML = `<img loading="lazy" src="${src}" alt="${alt}">`;
-                a.addEventListener('click', e=>{
-                    e.preventDefault();
-                    openLightbox(src, alt)
-                });
-                grid.appendChild(a);
-            });
+      <form class="panel form" id="contactForm"
+            data-endpoint="PASTE_WEB_APP_URL_HERE"
+            onsubmit="sendForm(event)">
+        <div class="row two">
+          <div class="field">
+            <label for="name">Your name</label>
+            <input id="name" name="name" placeholder="Full name" autocomplete="name" required />
+          </div>
+          <div class="field">
+            <label for="phone">Phone (optional)</label>
+            <input id="phone" name="phone" type="tel" inputmode="tel" autocomplete="tel" placeholder="(555) 123-4567" />
+          </div>
+        </div>
+        <div class="row two">
+          <div class="field">
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" placeholder="you@example.com" autocomplete="email" required />
+          </div>
+          <div class="field">
+            <label for="date">Event date</label>
+            <input id="date" type="date" name="date" aria-label="Event date" />
+          </div>
+        </div>
+        <div class="row two">
+          <div class="field">
+            <label for="type">Shoot type</label>
+            <select id="type" name="type" aria-label="Shoot type">
+              <option value="" selected>Choose…</option>
+              <option>Wedding</option>
+              <option>Portrait</option>
+              <option>Event</option>
+              <option>Other</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="location">Location (optional)</label>
+            <input id="location" name="location" placeholder="Neighborhood / venue" autocomplete="address-level2" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="message">Notes</label>
+          <textarea id="message" name="message" placeholder="Short and sweet is perfect"></textarea>
+          <div class="helper">I typically reply within 24 hours.</div>
+        </div>
+
+        <!-- Controls -->
+        <div style="display:flex; gap:10px; flex-wrap:wrap">
+          <!-- <button class="btn" type="submit">Send to my email</button>
+          <button class="btn alt" type="button" onclick="createDraft()">Create Gmail draft</button> -->
+          <button class="btn" type="button" onclick="openGmailCompose()">send by Gmail</button>
+        </div>
+
+        <p id="thanks" class="muted" role="status" aria-live="polite" style="margin:6px 0 0"></p>
+      </form>
+    </div>
+  </section>
+
+  <!-- Sticky Mobile Bar -->
+  <nav class="mbar" aria-label="Quick actions">
+    <a href="#work">Portfolio</a>
+    <a href="#services">Services</a>
+    <a class="primary" href="#book">Book</a>
+  </nav>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Image viewer" onclick="closeLightbox()">
+    <img id="lightboxImg" alt="Expanded portfolio image" />
+    <button class="sr-only" onclick="closeLightbox()">Close</button>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <script>
+    /* ------------ Portfolio grid ------------ */
+    const items = [
+      {src:"4.jpeg", tag:"portrait", alt:"Smiling portrait against mural"},
+      {src:"5.jpg",  tag:"wedding",  alt:"Couple under confetti"},
+      {src:"6.jpeg", tag:"event",    alt:"Friends dancing at party"},
+      {src:"7.jpg",  tag:"wedding",  alt:"First look in the park"},
+      {src:"8.jpeg", tag:"portrait", alt:"Studio headshot with smile"},
+      {src:"9.jpg",  tag:"event",    alt:"Cocktail cheers"},
+      {src:"10.jpg", tag:"portrait", alt:"Golden hour close-up"},
+      {src:"11.jpeg",tag:"wedding",  alt:"City rooftop ceremony"}
+    ];
+    const grid = document.getElementById('grid');
+    function render(filter='all'){
+      grid.innerHTML = '';
+      items.filter(i => filter==='all' || i.tag===filter).forEach(({src,alt})=>{
+        const a = document.createElement('a');
+        a.href = src; a.className = 'item'; a.setAttribute('data-src', src);
+        a.innerHTML = `<img loading="lazy" src="${src}" alt="${alt}">`;
+        a.addEventListener('click', e=>{ e.preventDefault(); openLightbox(src, alt) });
+        grid.appendChild(a);
+      });
+    }
+    document.querySelectorAll('.chip').forEach(ch=>{
+      ch.addEventListener('click', ()=>{
+        document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
+        ch.classList.add('active');
+        render(ch.dataset.filter);
+      });
+    });
+
+    /* ------------ Lightbox ------------ */
+    const lb = document.getElementById('lightbox');
+    const lbImg = document.getElementById('lightboxImg');
+    function openLightbox(src, alt){ lbImg.src = src; lbImg.alt = alt; lb.classList.add('open'); }
+    function closeLightbox(){ lb.classList.remove('open'); lbImg.src=''; }
+    document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeLightbox() });
+
+    /* ------------ Reveal on scroll ------------ */
+    const io = new IntersectionObserver((entries)=>{
+      entries.forEach(ent=>{
+        if(ent.isIntersecting){ ent.target.classList.add('is-visible'); io.unobserve(ent.target) }
+      });
+    }, {threshold:.2});
+    document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
+
+    /* ------------ Map (single init) ------------ */
+    (function initMap(){
+      const longBeach = [40.5884, -73.6579];
+      const map = L.map('map', { scrollWheelZoom:false }).setView(longBeach, 13);
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'&copy; OpenStreetMap contributors' }).addTo(map);
+      L.marker(longBeach).addTo(map).bindPopup('Long Beach, NY — Primary shooting area').openPopup();
+      map.getContainer().setAttribute('tabindex','0');
+      map.getContainer().setAttribute('aria-label','Interactive map of Long Beach, NY');
+    })();
+
+    /* ============ CONTACT FORM EMAIL OPTIONS ============ */
+    const YOUR_EMAIL = 'uzihd783@gmail.com'; // used for the Gmail compose fallback
+
+    function buildSubject(fd){
+      const type = fd.get('type') || 'Shoot';
+      const date = fd.get('date') ? ' on ' + fd.get('date') : '';
+      return `📸 New booking request — ${type}${date}`;
+    }
+    function buildPlainBody(fd){
+      return [
+        `New inquiry from ${fd.get('name') || '-'}`,
+        `Email: ${fd.get('email') || '-'}`,
+        `Phone: ${fd.get('phone') || '-'}`,
+        `Date: ${fd.get('date') || '-'}`,
+        `Type: ${fd.get('type') || '-'}`,
+        `Location: ${fd.get('location') || '-'}`,
+        '',
+        'Message:',
+        (fd.get('message') || '-'),
+        '',
+        '--',
+        `Source: ${location.href}`,
+        `Submitted: ${new Date().toString()}`
+      ].join('\n');
+    }
+
+    // 2a) Auto-send (server) — default form submit
+    async function sendForm(e){
+      e.preventDefault();
+      const form = e.target;
+      const btn  = form.querySelector('button[type="submit"]');
+      const out  = document.getElementById('thanks');
+      const endpoint = form.dataset.endpoint || '';
+
+      btn.disabled = true;
+      out.textContent = "Sending…";
+
+      const fd = new FormData(form);
+      fd.append('source', location.href);
+
+      try {
+        if (!endpoint || endpoint.startsWith('PASTE_WEB_APP_URL_HERE')) {
+          // No backend configured → open Gmail compose instead
+          openGmailCompose();
+          out.textContent = "Opening Gmail… (no server configured)";
+          return;
         }
 
-        var map = L.map('map').setView([43.0, -75.5], 7); // Center of NY State, zoom level 7
+        // Force send mode
+        fd.set('mode', 'send');
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap contributors'
-}).addTo(map);
+        const res = await fetch(endpoint, { method: 'POST', body: fd });
+        let ok = true;
+        try { const json = await res.json(); ok = json && json.ok; } catch(_){ /* Some deployments block reading body; treat as OK */ }
 
-// Optional: Add a marker for Long Beach as your primary location
-L.marker([40.5887, -73.6571]).addTo(map)
-    .bindPopup('Long Beach, NY - Primary Location');
-
-        // Filters
-        document.querySelectorAll('.chip').forEach(ch=>{
-            ch.addEventListener('click', ()=>{
-                document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-                ch.classList.add('active');
-                render(ch.dataset.filter);
-            });
-        });
-
-        // Lightbox
-        const lb = document.getElementById('lightbox');
-        const lbImg = document.getElementById('lightboxImg');
-
-        function openLightbox(src, alt){
-            lbImg.src = src;
-            lbImg.alt = alt;
-            lb.classList.add('open');
+        if(ok){
+          out.textContent = "Sent! I’ll reply soon.";
+          form.reset();
+        } else {
+          throw new Error('Server error');
         }
+      } catch (err){
+        out.textContent = "Sorry, something went wrong. Try the Gmail button.";
+      } finally {
+        btn.disabled = false;
+      }
+    }
 
-        function closeLightbox(){
-            lb.classList.remove('open');
-            lbImg.src='';
+    // 2b) Create a Gmail draft (server) — appears in YOUR Gmail drafts
+    async function createDraft(){
+      const form = document.getElementById('contactForm');
+      const out  = document.getElementById('thanks');
+      const endpoint = form.dataset.endpoint || '';
+
+      if (!endpoint || endpoint.startsWith('PASTE_WEB_APP_URL_HERE')) {
+        openGmailCompose(); // fallback if server not set
+        out.textContent = "Opening Gmail… (no server configured)";
+        return;
+      }
+
+      out.textContent = "Creating Gmail draft…";
+      const fd = new FormData(form);
+      fd.append('source', location.href);
+      fd.set('mode', 'draft');
+
+      try {
+        const res = await fetch(endpoint, { method: 'POST', body: fd });
+        let ok = true;
+        try { const json = await res.json(); ok = json && json.ok; } catch(_){}
+        if(ok){
+          out.textContent = "Draft created in your Gmail ✔";
+        } else {
+          throw new Error('Server error');
         }
+      } catch (e){
+        out.textContent = "Couldn’t create draft. Try the Gmail button.";
+      }
+    }
 
-        document.addEventListener('keydown', e=>{
-            if(e.key==='Escape') closeLightbox()
-        });
+    // 2c) Client-only: open Gmail compose prefilled (no server)
+    function openGmailCompose(){
+      const form = document.getElementById('contactForm');
+      const fd   = new FormData(form);
+      const subject = buildSubject(fd);
+      const body    = buildPlainBody(fd);
 
-        // Thank-you message
-        function thanks(e){
-            e.preventDefault();
-            document.getElementById('thanks').textContent = "Thanks! I'll reply soon.";
-            e.target.reset();
-        }
+      // Prefer Gmail web compose
+      const gmail = 'https://mail.google.com/mail/?view=cm&fs=1'
+        + '&to='   + encodeURIComponent(YOUR_EMAIL)
+        + '&su='   + encodeURIComponent(subject)
+        + '&body=' + encodeURIComponent(body);
 
-        // Reveal on scroll
-        const io = new IntersectionObserver((entries)=>{
-            entries.forEach(ent=>{
-                if(ent.isIntersecting){
-                    ent.target.classList.add('is-visible');
-                    io.unobserve(ent.target)
-                }
-            });
-        }, {threshold:.2});
+      const win = window.open(gmail, '_blank');
+      if (!win || win.closed || typeof win.closed === 'undefined') {
+        // Popup blocked → fallback to mailto
+        const mailto = 'mailto:' + encodeURIComponent(YOUR_EMAIL)
+          + '?subject=' + encodeURIComponent(subject)
+          + '&body='    + encodeURIComponent(body);
+        window.location.href = mailto;
+      }
+    }
 
-        document.querySelectorAll('.reveal').forEach(el=> io.observe(el));
-
-        // Initial render
-        render();
-
-        // Map (Long Beach, NY)
-        (function initMap(){
-            const longBeach = [40.5884, -73.6579];
-            const map = L.map('map', {
-                scrollWheelZoom:false
-            }).setView(longBeach, 13);
-
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                attribution: '&copy; OpenStreetMap contributors'
-            }).addTo(map);
-
-            L.marker(longBeach)
-                .addTo(map)
-                .bindPopup('Long Beach, NY — Primary shooting area')
-                .openPopup();
-
-            map.getContainer().setAttribute('tabindex','0');
-            map.getContainer().setAttribute('aria-label','Interactive map of Long Beach, NY');
-        })();
-    </script>
+    // Initial render
+    render();
+  </script>
 </body>
 </html>
